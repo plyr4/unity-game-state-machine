@@ -1,7 +1,3 @@
-using System.Collections;
-using UnityEngine;
-using DG.Tweening;
-
 public class GStateNull : GStateBase
 {
     public GStateNull()
