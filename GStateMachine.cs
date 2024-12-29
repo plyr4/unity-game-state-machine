@@ -12,6 +12,6 @@ public class GStateMachine : StateMachine
     {
         _currentGState = (GStateBase)newState;
         if (_onStateChange != null)
-            _onStateChange.Invoke(new GameEventOpts(previousState, newState));
+            _onStateChange.Invoke(new GameStateChangeOpts(previousState, newState));
     }
 }

@@ -14,6 +14,8 @@ public class GStateMachineGame : GStateMachineMono
     private GStateBase _playLoad;
     private GStateBase _playIn;
     private GStateBase _play;
+    private GStateBase _pause;
+    private GStateBase _retry;
     private GStateBase _quit;
 
     public static GStateMachineGame Instance
@@ -56,6 +58,8 @@ public class GStateMachineGame : GStateMachineMono
         _playLoad = ((GStateFactory)_stateFactory).PlayLoad();
         _playIn = ((GStateFactory)_stateFactory).PlayIn();
         _play = ((GStateFactory)_stateFactory).Play();
+        _pause = ((GStateFactory)_stateFactory).Pause();
+        _retry = ((GStateFactory)_stateFactory).Retry();
         _quit = ((GStateFactory)_stateFactory).Quit();
 
         // transitions
@@ -96,6 +100,18 @@ public class GStateMachineGame : GStateMachineMono
 
         at(_playIn, _play, new FuncPredicate(() =>
             _playIn._done
+        ));
+
+        at(_play, _pause, new FuncPredicate(() =>
+            _pause._ready
+        ));
+
+        at(_pause, _play, new FuncPredicate(() =>
+            _pause._done && _play._ready
+        ));
+
+        at(_pause, _retry, new FuncPredicate(() =>
+            _pause._done && _retry._ready
         ));
 
         _stateMachine.SetState(_nan);
@@ -150,6 +166,23 @@ public class GStateMachineGame : GStateMachineMono
     public void HandleStartPlay()
     {
         _startOutPlayIn._ready = true;
+    }
+
+    public void HandlePlayPause()
+    {
+        _pause._ready = true;
+    }
+
+    public void HandlePausePlay()
+    {
+        _pause._done = true;
+        _play._ready = true;
+    }
+
+    public void HandlePauseRetry()
+    {
+        _pause._done = true;
+        _retry._ready = true;
     }
 
     public void HandleStartQuit()
